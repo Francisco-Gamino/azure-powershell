@@ -13,7 +13,6 @@
 // ----------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Security.Permissions;
@@ -204,6 +203,7 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
                 ExpiryTime = this.ExpiryTime,
                 Frequency = ScheduleFrequency.Month,
                 Interval = this.MonthInterval,
+                TimeZone = this.TimeZone,
                 MonthlyScheduleOptions = this.IsMonthlyScheduleNull() 
                     ? null
                     : new MonthlyScheduleOptions()
@@ -249,6 +249,7 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
                 ExpiryTime = this.ExpiryTime,
                 Frequency = ScheduleFrequency.Week,
                 Interval = this.WeekInterval,
+                TimeZone = this.TimeZone,
                 WeeklyScheduleOptions = this.DaysOfWeek == null
                     ? null
                     : new WeeklyScheduleOptions()
