@@ -343,23 +343,14 @@ namespace Microsoft.Azure.Commands.Automation.Common
                     Frequency = schedule.Frequency.ToString(),
                     AdvancedSchedule = schedule.GetAdvancedSchedule(),
                     TimeZone = schedule.TimeZone,
-                }
+                },
+                ConvertTimesFromTimeZone = !string.IsNullOrWhiteSpace(schedule.TimeZone)
             };
 
-            if (!string.IsNullOrEmpty(schedule.TimeZone))
-            {
-                this.automationManagementClient.Schedules.CreateOrUpdateWithTimeConversion(
+            this.automationManagementClient.Schedules.CreateOrUpdate(
                     resourceGroupName,
                     automationAccountName,
                     scheduleCreateOrUpdateParameters);
-            }
-            else
-            {
-                this.automationManagementClient.Schedules.CreateOrUpdate(
-                    resourceGroupName,
-                    automationAccountName,
-                    scheduleCreateOrUpdateParameters);
-            }
 
             return this.GetSchedule(resourceGroupName, automationAccountName, schedule.Name);
         }
@@ -417,6 +408,44 @@ namespace Microsoft.Azure.Commands.Automation.Common
             isEnabled = (isEnabled.HasValue) ? isEnabled : scheduleModel.Properties.IsEnabled;
             description = description ?? scheduleModel.Properties.Description;
             return this.UpdateScheduleHelper(resourceGroupName, automationAccountName, scheduleName, isEnabled, description);
+        }
+
+        public Schedule UpdateSchedule(
+            string resourceGroupName,
+            string automationAccountName,
+            string scheduleName,
+            bool? isEnabled,
+            string description,
+            DateTimeOffset? startTime,
+            DateTimeOffset? expiryTime,
+            byte? interval,
+            string frequency,
+            AdvancedSchedule advancedSchedule,
+            string timeZone)
+        {
+            var scheduleUpdateParameters = new AutomationManagement.Models.SchedulePatchParameters
+            {
+                Name = scheduleName,
+                Properties = new AutomationManagement.Models.SchedulePatchProperties
+                {
+                    Description = description,
+                    IsEnabled = isEnabled,
+                    StartTime = startTime,
+                    ExpiryTime = expiryTime,
+                    Interval = interval,
+                    Frequency = frequency,
+                    AdvancedSchedule = advancedSchedule,
+                    TimeZone = timeZone
+                },
+                ConvertTimesFromTimeZone = !string.IsNullOrWhiteSpace(timeZone)
+            };
+
+            this.automationManagementClient.Schedules.Patch(
+                resourceGroupName,
+                automationAccountName,
+                scheduleUpdateParameters);
+
+            return this.GetSchedule(resourceGroupName, automationAccountName, scheduleName);
         }
 
         #endregion
