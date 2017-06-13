@@ -971,7 +971,7 @@ namespace Microsoft.Azure.Commands.Automation.Common
             }
         }
 
-        public CompilationJob StartCompilationJob(string resourceGroupName, string automationAccountName, string configurationName, IDictionary parameters, IDictionary configurationData)
+        public CompilationJob StartCompilationJob(string resourceGroupName, string automationAccountName, string configurationName, IDictionary parameters, IDictionary configurationData, bool incrementBuildVersion)
         {
             using (var request = new RequestSettings(this.automationManagementClient))
             {
@@ -983,7 +983,8 @@ namespace Microsoft.Azure.Commands.Automation.Common
                         {
                             Name = configurationName
                         },
-                        Parameters = this.ProcessConfigurationParameters(parameters, configurationData)
+                        Parameters = this.ProcessConfigurationParameters(parameters, configurationData),
+                        IncrementBuildVersion = incrementBuildVersion
                     }
                 };
 
@@ -1125,6 +1126,7 @@ namespace Microsoft.Azure.Commands.Automation.Common
             string automationAccountName,
             string sourcePath,
             string configurationName,
+            bool incrementVersion,
             bool overWrite)
         {
             using (var request = new RequestSettings(this.automationManagementClient))
@@ -1161,10 +1163,23 @@ namespace Microsoft.Azure.Commands.Automation.Common
                     null);
                 if (nodeConfigurationModel != null)
                 {
-                    if (!overWrite)
+                    if (!incrementVersion)
                     {
-                        throw new ResourceCommonException(typeof(Model.NodeConfiguration),
-                            string.Format(CultureInfo.CurrentCulture, Resources.NodeConfigurationAlreadyExists, nodeConfigurationName));
+                        if (!overWrite)
+                        {
+                            throw new ResourceCommonException(typeof (Model.NodeConfiguration),
+                                string.Format(CultureInfo.CurrentCulture, Resources.NodeConfigurationAlreadyExists,
+                                    nodeConfigurationName));
+                        }
+                    }
+                    else
+                    {
+                        if (overWrite)
+                        {
+                            throw new ResourceCommonException(typeof(Model.NodeConfiguration),
+                                string.Format(CultureInfo.CurrentCulture, Resources.NodeConfigurationOperationConflict,
+                                    nodeConfigurationName));
+                        }
                     }
                 }
 
@@ -1193,13 +1208,13 @@ namespace Microsoft.Azure.Commands.Automation.Common
                         Name = configurationName
                     }
                 };
+                nodeConfigurationCreateParameters.IncrementBuildVersion = incrementVersion;
 
                 var nodeConfiguration =
                     this.automationManagementClient.NodeConfigurations.CreateOrUpdate(
                         resourceGroupName,
                         automationAccountName,
                         nodeConfigurationCreateParameters).NodeConfiguration;
-
 
                 return new Model.NodeConfiguration(resourceGroupName, automationAccountName, nodeConfiguration, null);
             }

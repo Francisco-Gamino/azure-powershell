@@ -27,8 +27,13 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
     {
         /// <summary>
         /// True to overwrite the existing configuration; false otherwise.
-        /// </summary>        
+        /// </summary>
         private bool overwriteExistingConfiguration;
+
+        /// <summary>
+        /// True to create a new build version; false otherwise.
+        /// </summary>
+        private bool incrementBuildVersion; 
 
         /// <summary>
         /// Gets or sets the source path.
@@ -55,6 +60,16 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
         }
 
         /// <summary>
+        /// Gets or sets switch parameter to confirm building a new build version of the NodeConfiguration.
+        /// </summary>
+        [Parameter(Mandatory = false, HelpMessage = "Creates a new Node Configuration build version.")]
+        public SwitchParameter IncrementBuildVersion
+        {
+            get { return this.incrementBuildVersion; }
+            set { this.incrementBuildVersion = value; }
+        }
+
+        /// <summary>
         /// Execute this cmdlet.
         /// </summary>
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
@@ -67,6 +82,7 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
                     this.AutomationAccountName,
                     this.Path,
                     this.ConfigurationName,
+                    this.IncrementBuildVersion,
                     this.Force);
 
                 this.WriteObject(nodeConfiguration);

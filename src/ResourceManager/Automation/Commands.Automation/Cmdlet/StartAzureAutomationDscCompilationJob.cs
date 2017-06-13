@@ -30,6 +30,11 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
     public class StartAzureAutomationDscCompilationJob : AzureAutomationBaseCmdlet
     {
         /// <summary>
+        /// True to create a new build version; false otherwise.
+        /// </summary>
+        private bool incrementBuildVersion;
+
+        /// <summary>
         /// Gets or sets the configuration name.
         /// </summary>
         [Parameter(Position = 2, Mandatory = true, ValueFromPipelineByPropertyName = true, HelpMessage = "The configuration name.")]
@@ -49,6 +54,16 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
         public IDictionary ConfigurationData { get; set; }
 
         /// <summary>
+        /// Gets or sets switch parameter to confirm building a new build version of the NodeConfiguration.
+        /// </summary>
+        [Parameter(Mandatory = false, HelpMessage = "Creates a new Node Configuration build version.")]
+        public SwitchParameter IncrementBuildVersion
+        {
+            get { return this.incrementBuildVersion; }
+            set { this.incrementBuildVersion = value; }
+        }
+
+        /// <summary>
         /// Execute this cmdlet.
         /// </summary>
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
@@ -64,7 +79,7 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
                                               Resources.ConfigurationDataShouldNotBeInJobParameters, "-ConfigurationData"));
             }
 
-            job = this.AutomationClient.StartCompilationJob(this.ResourceGroupName, this.AutomationAccountName, this.ConfigurationName, this.Parameters, this.ConfigurationData);
+            job = this.AutomationClient.StartCompilationJob(this.ResourceGroupName, this.AutomationAccountName, this.ConfigurationName, this.Parameters, this.ConfigurationData, this.IncrementBuildVersion);
 
             this.WriteObject(job);
         }
