@@ -443,4 +443,8 @@
     <value>For monthly occurrence, both day of week and occurrence need to be specified.</value>
     <comment>Automation</comment>
   </data>
+  <data name="NodeConfigurationOperationConflict" xml:space="preserve">
+    <value>Cannot have overwrite and incrementBuildVersion together while importing NodeConfiguration.</value>
+    <comment>Automation</comment>
+  </data>
 </root>
