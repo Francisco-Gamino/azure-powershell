@@ -145,7 +145,8 @@ namespace Microsoft.Azure.Commands.Automation.Common
             string runbookName,
             bool isEnabled,
             DateTimeOffset expiryTime,
-            IDictionary parameters);
+            IDictionary parameters,
+            string runOn);
 
         Model.Webhook GetWebhook(string resourceGroupName, string automationAccountName, string name);
 
@@ -303,7 +304,7 @@ namespace Microsoft.Azure.Commands.Automation.Common
 
         IEnumerable<JobSchedule> ListJobSchedulesByScheduleName(string resourceGroupName, string automationAccountName, string scheduleName);
 
-        JobSchedule RegisterScheduledRunbook(string resourceGroupName, string automationAccountName, string runbookName, string scheduleName, IDictionary parameters);
+        JobSchedule RegisterScheduledRunbook(string resourceGroupName, string automationAccountName, string runbookName, string scheduleName, IDictionary parameters, string runOn);
 
         void UnregisterScheduledRunbook(string resourceGroupName, string automationAccountName, Guid jobScheduleId);
 
