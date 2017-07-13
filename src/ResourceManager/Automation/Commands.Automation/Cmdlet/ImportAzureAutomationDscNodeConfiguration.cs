@@ -15,13 +15,14 @@
 using Microsoft.Azure.Commands.Automation.Model;
 using System.Management.Automation;
 using System.Security.Permissions;
+using Microsoft.Azure.Commands.Automation.Common;
 
 namespace Microsoft.Azure.Commands.Automation.Cmdlet
 {
     /// <summary>
     /// Imports dsc node configuration script
     /// </summary>
-    [Cmdlet(VerbsData.Import, "AzureRmAutomationDscNodeConfiguration", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsData.Import, "AzureRmAutomationDscNodeConfiguration", SupportsShouldProcess = true, DefaultParameterSetName = AutomationCmdletParameterSets.ByNodeConfiguration)]
     [OutputType(typeof(NodeConfiguration))]
     public class ImportAzureAutomationDscNodeConfiguration : AzureAutomationBaseCmdlet
     {
@@ -33,26 +34,28 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
         /// <summary>
         /// True to create a new build version; false otherwise.
         /// </summary>
-        private bool incrementBuildVersion; 
+        private bool _incrementNodeConfigurationBuild; 
 
         /// <summary>
         /// Gets or sets the source path.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, HelpMessage = "Path to the node configuration .mof to import.")]
+        [Parameter(ParameterSetName = AutomationCmdletParameterSets.ByNodeConfiguration, Mandatory = true, ValueFromPipelineByPropertyName = true, HelpMessage = "Path to the node configuration .mof to import.")]
+        [Parameter(ParameterSetName = AutomationCmdletParameterSets.ByNodeConfigurationBuild, Mandatory = true, ValueFromPipelineByPropertyName = true, HelpMessage = "Path to the node configuration .mof to import.")]
         [ValidateNotNullOrEmpty]
         public string Path { get; set; }
 
         /// <summary>
         /// Gets or sets the configuration name for the node configuration.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, HelpMessage = "The name of the DSC Configuration to import the Node Configuration under. All Node Configurations in Azure Automation must exist under a Configuration. The name of the Configuration will become the namespace of the imported Node Configuration, in the form of 'ConfigurationName.MofFileName'")]
+        [Parameter(ParameterSetName = AutomationCmdletParameterSets.ByNodeConfiguration, Mandatory = true, ValueFromPipelineByPropertyName = true, HelpMessage = "The name of the DSC Configuration to import the Node Configuration under. All Node Configurations in Azure Automation must exist under a Configuration. The name of the Configuration will become the namespace of the imported Node Configuration, in the form of 'ConfigurationName.MofFileName'")]
+        [Parameter(ParameterSetName = AutomationCmdletParameterSets.ByNodeConfigurationBuild, Mandatory = true, ValueFromPipelineByPropertyName = true, HelpMessage = "The name of the DSC Configuration to import the Node Configuration under. All Node Configurations in Azure Automation must exist under a Configuration. The name of the Configuration will become the namespace of the imported Node Configuration, in the form of 'ConfigurationName.MofFileName'")]
         public string ConfigurationName { get; set; }
 
 
         /// <summary>
         /// Gets or sets switch parameter to confirm overwriting of existing configurations.
         /// </summary>
-        [Parameter(Mandatory = false, HelpMessage = "Forces the command to overwrite an existing Node Configuration.")]
+        [Parameter(ParameterSetName = AutomationCmdletParameterSets.ByNodeConfiguration, Mandatory = false, HelpMessage = "Forces the command to overwrite an existing Node Configuration.")]
         public SwitchParameter Force
         {
             get { return this.overwriteExistingConfiguration; }
@@ -62,11 +65,11 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
         /// <summary>
         /// Gets or sets switch parameter to confirm building a new build version of the NodeConfiguration.
         /// </summary>
-        [Parameter(Mandatory = false, HelpMessage = "Creates a new Node Configuration build version.")]
-        public SwitchParameter IncrementBuildVersion
+        [Parameter(ParameterSetName = AutomationCmdletParameterSets.ByNodeConfigurationBuild, Mandatory = false, HelpMessage = "Creates a new Node Configuration build version.")]
+        public SwitchParameter IncrementNodeConfigurationBuild
         {
-            get { return this.incrementBuildVersion; }
-            set { this.incrementBuildVersion = value; }
+            get { return this._incrementNodeConfigurationBuild; }
+            set { this._incrementNodeConfigurationBuild = value; }
         }
 
         /// <summary>
@@ -82,7 +85,7 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
                     this.AutomationAccountName,
                     this.Path,
                     this.ConfigurationName,
-                    this.IncrementBuildVersion,
+                    this.IncrementNodeConfigurationBuild,
                     this.Force);
 
                 this.WriteObject(nodeConfiguration);
