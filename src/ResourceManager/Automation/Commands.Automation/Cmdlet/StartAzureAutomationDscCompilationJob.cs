@@ -32,7 +32,7 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
         /// <summary>
         /// True to create a new build version; false otherwise.
         /// </summary>
-        private bool incrementBuildVersion;
+        private bool _incrementNodeConfigurationBuild;
 
         /// <summary>
         /// Gets or sets the configuration name.
@@ -57,10 +57,10 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
         /// Gets or sets switch parameter to confirm building a new build version of the NodeConfiguration.
         /// </summary>
         [Parameter(Mandatory = false, HelpMessage = "Creates a new Node Configuration build version.")]
-        public SwitchParameter IncrementBuildVersion
+        public SwitchParameter IncrementNodeConfigurationBuild
         {
-            get { return this.incrementBuildVersion; }
-            set { this.incrementBuildVersion = value; }
+            get { return this._incrementNodeConfigurationBuild; }
+            set { this._incrementNodeConfigurationBuild = value; }
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
                                               Resources.ConfigurationDataShouldNotBeInJobParameters, "-ConfigurationData"));
             }
 
-            job = this.AutomationClient.StartCompilationJob(this.ResourceGroupName, this.AutomationAccountName, this.ConfigurationName, this.Parameters, this.ConfigurationData, this.IncrementBuildVersion);
+            job = this.AutomationClient.StartCompilationJob(this.ResourceGroupName, this.AutomationAccountName, this.ConfigurationName, this.Parameters, this.ConfigurationData, this.IncrementNodeConfigurationBuild);
 
             this.WriteObject(job);
         }

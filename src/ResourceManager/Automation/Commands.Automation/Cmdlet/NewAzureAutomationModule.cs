@@ -39,6 +39,7 @@ namespace Microsoft.Azure.Commands.Automation.Cmdlet
         /// </summary>
         [Parameter(Position = 3, Mandatory = true, ValueFromPipelineByPropertyName = true,
             HelpMessage = "The url to a module zip package.")]
+        [Alias("ContentLinkUri")]
         [ValidateNotNullOrEmpty]
         public Uri ContentLink { get; set; }
 

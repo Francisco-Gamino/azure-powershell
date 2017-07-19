@@ -1546,7 +1546,7 @@ namespace Microsoft.Azure.Commands.Automation.Common
         }
 
         public JobSchedule RegisterScheduledRunbook(string resourceGroupName, string automationAccountName, string runbookName,
-            string scheduleName, IDictionary parameters)
+            string scheduleName, IDictionary parameters, string runOn)
         {
             var processedParameters = this.ProcessRunbookParameters(resourceGroupName, automationAccountName, runbookName, parameters);
             var sdkJobSchedule = this.automationManagementClient.JobSchedules.Create(
@@ -1558,7 +1558,8 @@ namespace Microsoft.Azure.Commands.Automation.Common
                     {
                         Schedule = new ScheduleAssociationProperty { Name = scheduleName },
                         Runbook = new RunbookAssociationProperty { Name = runbookName },
-                        Parameters = processedParameters
+                        Parameters = processedParameters,
+                        RunOn = runOn
                     }
                 }).JobSchedule;
 
