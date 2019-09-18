@@ -62,6 +62,7 @@ require:
 enable-multi-api: false
 web: $(repo)/specification/web/resource-manager/Microsoft.Web
 input-file:
+# - $(web)/stable/2015-08-01/service.json
 - $(web)/stable/2018-02-01/Certificates.json
 - $(web)/stable/2018-02-01/CommonDefinitions.json
 - $(web)/stable/2018-02-01/DeletedWebApps.json
@@ -79,9 +80,30 @@ skip-model-cmdlets: true
 title: FunctionsClient
 
 directive:
-  - where:
-      subject: Operation
-    hide: true
-  - where: $.definitions.Identifier.properties
+- where: $.definitions.Identifier.properties
     suppress: R3019
+
+# Cmdlet renames
+  - where:
+    subject: Operation
+  hide: true
+  - where:
+    subject: WebAppFunction
+    set:
+      subject: FunctionApp  
+  - where:
+      subject: WebAppPremierAddOn(.*)
+    hide: true
+  - where:
+      subject: WebAppSlotConfigToProduction(.*)
+    hide: true
+  - where:
+      subject: WebAppBackup(.*)
+    hide: true
+  - where:
+      subject: AppServiceEnvironment(.*)
+    hide: true
+  - where:
+    subject: UpdateAzWebAppConfiguration(.*)
+  hide: true
 ```
