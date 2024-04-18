@@ -175,7 +175,7 @@ function setupEnv() {
             OSType = "Windows"
             Runtime = "DotNet"
             RuntimeVersion = 6
-            Name = "Functions-DoNet-6-" + (RandomString -len 6)
+            Name = "Functions-DotNet-6-" + (RandomString -len 6)
             FunctionsVersion = 4
         },
         @{
@@ -232,6 +232,21 @@ function setupEnv() {
     $newApplInsightsName = $functionNamePowerShell + "-new"
     $newApplInsights = New-AzApplicationInsights -ResourceGroupName $env.resourceGroupNameWindowsPremium -Name $newApplInsightsName -Location $location
     $env.add('newApplInsights', $newApplInsights) | Out-Null
+
+    # Resources for Functions on ACA scenarios
+    $resourceGroupNameACA = "Functions-ACA-Test-" + (RandomString -len 10)
+    $locationACA = "eastus"
+    $storageAccountNameACA = "funcacastotorage" + (RandomString -len 5)
+    $workSpaceACAName = "workspace-azpstest" + (RandomString -len 4)
+    $environmentACAName = "azps-env-test" + (RandomString -len 3)
+    $functionAppACAName = "test1appaca" + (RandomString -len 4)
+
+    $env.add('resourceGroupNameACA', $resourceGroupNameACA) | Out-Null
+    $env.add('locationACA', $locationACA) | Out-Null
+    $env.add('storageAccountNameACA', $storageAccountNameACA) | Out-Null
+    $env.add('workSpaceACAName', $workSpaceACAName) | Out-Null
+    $env.add('environmentACAName', $environmentACAName) | Out-Null
+    $env.add('functionAppACAName', $functionAppACAName) | Out-Null
 
     # Set the test mode for the Az.Functions module
     # This is requried to support playback mode (given that we need to have the same values in teh payload for each function app creation)
