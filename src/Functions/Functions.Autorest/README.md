@@ -223,16 +223,16 @@ directive:
       subject: SystemAssignedIdentity(.*)
     hide: true
   - where:
-      subject: WebAppBasicPublishingCredentialsPolicy
+      subject: (.*)BasicPublishingCredentialsPolicy(.*)
     hide: true
   - where:
       subject: WebAppFunctionKey(.*)
     hide: true
   - where:
-      subject: WebAppScmAllowed
+      subject: (.*)ScmAllowed(.*)
     hide: true
   - where:
-      subject: WebAppSettingKeyVaultReference
+      subject: WebAppSettingKeyVaultReference(.*)
     hide: true
   - where:
       subject: WebAppSyncStatus(.*)
@@ -249,7 +249,7 @@ directive:
     hide: true
 # Cmdlets to remove
   - where:
-      subject: WebAppFtpAllowed
+      subject: (.*)WebAppFtpAllowed(.*)
     remove: true
   - where:
       subject: WebAppPremierAddOn(.*)
@@ -447,7 +447,7 @@ directive:
       subject: (.*)WebAppTriggered(.*)
     remove: true
   - where:
-      subject: (.*)WebAppUsage(.*)
+      subject: (.*)Usage(.*)
     remove: true
   - where:
       subject: (.*)AzWebAppWeb(.*)
@@ -465,7 +465,7 @@ directive:
       subject: (.*)Connection(.*)
     remove: true
   - where:
-      subject: (.*)WebAppDeployment(.*)
+      subject: (.*)OneDeploy(.*)
     remove: true
   - where:
       subject: (.*)WebAppHost(.*)
@@ -549,10 +549,13 @@ directive:
       subject: (.*)CustomName(.*)
     remove: true
   - where:
-      subject: (.*)CustomName(.*)
+      subject: (.*)CustomHostName(.*)
     remove: true
   - where:
       subject: (.*)Workflow(.*)
+    remove: true
+  - where:
+      subject: (.*)AseRegion(.*)
     remove: true
   - from: source-file-csharp
     where: $
