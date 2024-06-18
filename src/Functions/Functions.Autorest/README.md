@@ -69,7 +69,7 @@ directive:
 ```
 
 ``` yaml
-commit: ec1d84feec05fa3109db89e962f913e2f05a50cc
+commit: d9f06f3de6cb00796a91b86b622dcf50340952a2
 branch: release-web-2023-12-01
 require:
   - $(this-folder)/../../readme.azure.noprofile.md
