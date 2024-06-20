@@ -92,7 +92,7 @@ New-AzFunctionApp -Name MyUniqueFunctionAppName `
 This command creates a function app using a using a private ACR image.
 
 
-### Example 4: Create a function app ACA.
+### Example 4: Create a function app on container app.
 
 ```powershell
 $resourceGroupName = "MyTestRGName"
@@ -128,7 +128,7 @@ New-AzContainerAppManagedEnv -Name $environmentName `
                              -VnetConfigurationInternal:$false `
                              -WorkloadProfile $workloadProfile
 
-# Create function app ACA
+# Create function app on container app
 New-AzFunctionApp -Name MyUniqueFunctionAppName `
                   -ResourceGroupName $resourceGroupName `
                   -StorageAccountName $storageAccountName `
