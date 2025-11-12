@@ -186,7 +186,7 @@ function NewAppSetting
         $Value
     )
 
-    $setting = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.NameValuePair
+    $setting = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.NameValuePair
     $setting.Name = $Name
     $setting.Value = $Value
 
@@ -494,7 +494,7 @@ function AddFunctionAppSettings
         $App.AppServicePlan = ($App.ServerFarmId -split "/")[-1]
     }
 
-    $App.OSType = if ($App.kind.ToString() -match "linux"){ "Linux" } else { "Windows" }
+    $App.OSType = if ($App.kind.ToString() -match "linux" -or $App.Reserved){ "Linux" } else { "Windows" }
 
     if ($App.Type -eq "Microsoft.Web/sites/slots")
     {
@@ -544,9 +544,10 @@ function AddFunctionAppSettings
     $App.ApplicationSettings = ConvertWebAppApplicationSettingToHashtable -ApplicationSetting $settings -RedactAppSettings
 
     # Add runtime
-    $App.Runtime = if ((-not [string]::IsNullOrEmpty($App.RuntimeName)) -and ($RuntimeToFormattedName.ContainsKey($App.RuntimeName)))
+    $theRuntimeName = [string]$App.RuntimeName
+    $App.Runtime = if ((-not [string]::IsNullOrEmpty($theRuntimeName)) -and ($RuntimeToFormattedName.ContainsKey($theRuntimeName)))
     {
-        $RuntimeToFormattedName[$App.RuntimeName]
+        $RuntimeToFormattedName[$theRuntimeName]
     }
     else
     {
@@ -1366,7 +1367,7 @@ function NewResourceTag
         $Tag
     )
 
-    $resourceTag = [Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.ResourceTags]::new()
+    $resourceTag = [Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.ResourceTags]::new()
 
     foreach ($tagName in $Tag.Keys)
     {
@@ -1486,14 +1487,14 @@ function NewAppSettingObject
     )
 
     # Create StringDictionaryProperties (hash table) with the app settings
-    $properties = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.StringDictionaryProperties
+    $properties = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.StringDictionaryProperties
 
     foreach ($keyName in $currentAppSettings.Keys)
     {
         $properties.Add($keyName, $currentAppSettings[$keyName])
     }
 
-    $appSettings = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.StringDictionary
+    $appSettings = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.StringDictionary
     $appSettings.Property = $properties
 
     return $appSettings
@@ -1660,11 +1661,11 @@ function NewIdentityUserAssignedIdentity
     )
 
     # If creating user assigned identities, only alphanumeric characters (0-9, a-z, A-Z), the underscore (_) and the hyphen (-) are supported.
-    $msiUserAssignedIdentities = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.ManagedServiceIdentityUserAssignedIdentities
+    $msiUserAssignedIdentities = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.ManagedServiceIdentityUserAssignedIdentities
 
     foreach ($id in $IdentityID)
     {
-        $functionAppUserAssignedIdentitiesValue = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.ManagedServiceIdentityUserAssignedIdentities
+        $functionAppUserAssignedIdentitiesValue = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.ManagedServiceIdentityUserAssignedIdentities
         $msiUserAssignedIdentities.Add($id, $functionAppUserAssignedIdentitiesValue)
     }
 
@@ -2568,7 +2569,7 @@ function New-PlanName
         $ResourceGroupName
     )
 
-    if ($env:FunctionsTestMode)
+    if ($env:FunctionsTestMode -and $env:FunctionsUseFlexStackTestData)
     {
         $suffix = "-0000"
     }
@@ -2618,7 +2619,7 @@ function New-FlexConsumptionAppPlan
         }
     }
 
-    $servicePlan = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.AppServicePlan
+    $servicePlan = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.AppServicePlan
     $servicePlan.Location = $Location
     $servicePlan.Reserved = $true
     $servicePlan.Kind = "functionapp"
@@ -2853,7 +2854,7 @@ function Resolve-UserAssignedIdentity
         }
 
         # Check if identity exists
-        $identity = Get-AzUserAssignedIdentity -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroup -ResourceName $identityName -ErrorAction SilentlyContinue @PSBoundParameters
+        $identity = Az.Functions.internal\Get-AzUserAssignedIdentity -SubscriptionId $subscriptionId -ResourceGroupName $resourceGroup -ResourceName $identityName -ErrorAction SilentlyContinue @PSBoundParameters
 
         if (-not $identity)
         {

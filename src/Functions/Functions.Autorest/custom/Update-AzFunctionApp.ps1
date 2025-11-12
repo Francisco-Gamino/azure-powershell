@@ -1,5 +1,5 @@
 function Update-AzFunctionApp {
-    [OutputType([Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.ISite])]
+    [OutputType([Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.ISite])]
     [Microsoft.Azure.PowerShell.Cmdlets.Functions.Description('Updates a function app.')]
     [CmdletBinding(DefaultParameterSetName='ByName', SupportsShouldProcess=$true, ConfirmImpact='Medium')]
     param(
@@ -20,7 +20,7 @@ function Update-AzFunctionApp {
         ${Name},
 
         [Parameter(ParameterSetName='ByObjectInput', Mandatory=$true, ValueFromPipeline=$true)]
-        [Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.ISite]
+        [Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.ISite]
         [ValidateNotNull()]
         ${InputObject},
 
@@ -48,7 +48,7 @@ function Update-AzFunctionApp {
 
         [Parameter(HelpMessage='Resource tags.')]
         [Microsoft.Azure.PowerShell.Cmdlets.Functions.Category('Body')]
-        [Microsoft.Azure.PowerShell.Cmdlets.Functions.Runtime.Info(PossibleTypes=([Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.IResourceTags]))]
+        [Microsoft.Azure.PowerShell.Cmdlets.Functions.Runtime.Info(PossibleTypes=([Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.IResourceTags]))]
         [System.Collections.Hashtable]
         [ValidateNotNull()]
         ${Tag},
@@ -61,7 +61,7 @@ function Update-AzFunctionApp {
             ")]
         [ArgumentCompleter([Microsoft.Azure.PowerShell.Cmdlets.Functions.Support.FunctionAppManagedServiceIdentityUpdateType])]
         [Microsoft.Azure.PowerShell.Cmdlets.Functions.Category('Body')]
-        [String]
+        [Microsoft.Azure.PowerShell.Cmdlets.Functions.Support.ManagedServiceIdentityType]
         ${IdentityType},
 
         [Parameter(HelpMessage="Specifies the list of user identities associated with the function app.
@@ -172,9 +172,9 @@ function Update-AzFunctionApp {
             $existingFunctionApp = GetFunctionAppByName -Name $Name -ResourceGroupName $ResourceGroupName @params
         }
 
-        $appSettings = New-Object -TypeName 'System.Collections.Generic.List[Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.INameValuePair]'
-        $siteCofig = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.SiteConfig
-        $functionAppDef = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Site
+        $appSettings = New-Object -TypeName System.Collections.Generic.List[System.Object]
+        $siteCofig = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.SiteConfig
+        $functionAppDef = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.Site
 
         # Identity information
         if ($IdentityType)

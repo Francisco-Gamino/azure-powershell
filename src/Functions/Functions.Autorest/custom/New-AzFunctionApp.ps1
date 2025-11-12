@@ -1,5 +1,5 @@
 function New-AzFunctionApp {
-    [OutputType([Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.ISite])]
+    [OutputType([Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.ISite])]
     [Microsoft.Azure.PowerShell.Cmdlets.Functions.Description('Creates a function app.')]
     [CmdletBinding(SupportsShouldProcess=$true, DefaultParametersetname="Consumption")]
     param(
@@ -154,7 +154,7 @@ function New-AzFunctionApp {
         [Parameter(ParameterSetName="EnvironmentForContainerApp")]
         [Parameter(ParameterSetName="FlexConsumption")]
         [Microsoft.Azure.PowerShell.Cmdlets.Functions.Category('Body')]
-        [Microsoft.Azure.PowerShell.Cmdlets.Functions.Runtime.Info(PossibleTypes=([Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.IResourceTags]))]
+        [Microsoft.Azure.PowerShell.Cmdlets.Functions.Runtime.Info(PossibleTypes=([Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.IResourceTags]))]
         [System.Collections.Hashtable]
         [ValidateNotNull()]
         ${Tag},
@@ -179,7 +179,7 @@ function New-AzFunctionApp {
         [Parameter(ParameterSetName="FlexConsumption")]
         [ArgumentCompleter([Microsoft.Azure.PowerShell.Cmdlets.Functions.Support.FunctionAppManagedServiceIdentityCreateType])]
         [Microsoft.Azure.PowerShell.Cmdlets.Functions.Category('Body')]
-        [String]
+        [Microsoft.Azure.PowerShell.Cmdlets.Functions.Support.ManagedServiceIdentityType]
         ${IdentityType},
 
         [Parameter(ParameterSetName="ByAppServicePlan", HelpMessage="Specifies the list of user identities associated with the function app.
@@ -388,9 +388,9 @@ Example:
         $appInsightCreated = $false
         $functionAppCreatedSuccessfully = $false
 
-        $appSettings = New-Object -TypeName 'System.Collections.Generic.List[Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.INameValuePair]'
-        $siteConfig = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.SiteConfig
-        $functionAppDef = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Site
+        $appSettings = New-Object -TypeName System.Collections.Generic.List[System.Object]
+        $siteConfig = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.SiteConfig
+        $functionAppDef = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20231201.Site
 
         $OSIsLinux = ($OSType -eq "Linux") -or $functionAppIsFlexConsumption
 
@@ -764,17 +764,17 @@ Example:
                 $StorageAccountInfo = Get-StorageAccountInfo -Name $DeploymentStorageName @params
 
                 # If container does not exist, create it
-                $container = Get-AzBlobContainer -ContainerName $DeploymentStorageContainerName `
-                                                 -AccountName $DeploymentStorageName `
-                                                 -ResourceGroupName $ResourceGroupName `
-                                                 -ErrorAction SilentlyContinue `
-                                                 @params
+                $container = Az.Functions.internal\Get-AzBlobContainer -ContainerName $DeploymentStorageContainerName `
+                                                                       -AccountName $DeploymentStorageName `
+                                                                       -ResourceGroupName $ResourceGroupName `
+                                                                       -ErrorAction SilentlyContinue `
+                                                                       @params
                 if (-not $container)
                 {
                     if ($WhatIfPreference.IsPresent)
                     {
                         Write-Verbose "WhatIf: Creating container '$DeploymentStorageContainerName' in storage account '$DeploymentStorageName'..."
-                        $container = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.BlobContainer
+                        $container = New-Object -TypeName Microsoft.Azure.PowerShell.Cmdlets.Functions.Models.Api20190401.BlobContainer
                     }
                     else
                     {
@@ -786,12 +786,12 @@ Example:
                         {
                             try
                             {
-                                $container = New-AzBlobContainer -ContainerName $DeploymentStorageContainerName `
-                                                                 -AccountName $DeploymentStorageName `
-                                                                 -ResourceGroupName $ResourceGroupName `
-                                                                 -ContainerPropertyPublicAccess None `
-                                                                 -ErrorAction Stop `
-                                                                 @params
+                                $container = Az.Functions.internal\New-AzBlobContainer -ContainerName $DeploymentStorageContainerName `
+                                                                                       -AccountName $DeploymentStorageName `
+                                                                                       -ResourceGroupName $ResourceGroupName `
+                                                                                       -ContainerPropertyPublicAccess None `
+                                                                                       -ErrorAction Stop `
+                                                                                       @params
                                 if ($container)
                                 {
                                     $flexConsumptionStorageContainerCreated = $true
@@ -891,7 +891,6 @@ Example:
                 # Set runtime information
                 $functionAppDef.RuntimeName = $runtimeInfo.Sku.functionAppConfigProperties.runtime.name
                 $functionAppDef.RuntimeVersion = $runtimeInfo.Sku.functionAppConfigProperties.runtime.version
-
             }
 
             # Validate storage account and get connection string
@@ -1082,7 +1081,7 @@ Example:
                 }
                 if ($flexConsumptionStorageContainerCreated)
                 {
-                    Remove-AzBlobContainer -ResourceGroupName $ResourceGroupName -StorageAccountName $DeploymentStorageName -ContainerName $DeploymentStorageContainerName @params
+                    Az.Functions.internal\Remove-AzBlobContainer -ResourceGroupName $ResourceGroupName -StorageAccountName $DeploymentStorageName -ContainerName $DeploymentStorageContainerName @params
                 }
 
                 if ($appInsightCreated -and ($null -ne $newAppInsightsProject))

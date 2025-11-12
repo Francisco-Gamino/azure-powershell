@@ -3,6 +3,9 @@
 This directory contains the PowerShell module for the Functions service.
 
 ---
+## Status
+[![Az.Functions](https://img.shields.io/powershellgallery/v/Az.Functions.svg?style=flat-square&label=Az.Functions "Az.Functions")](https://www.powershellgallery.com/packages/Az.Functions/)
+
 ## Info
 - Modifiable: yes
 - Generated: all
@@ -48,7 +51,7 @@ In this directory, run AutoRest:
 ``` yaml
 # For new modules, please avoid setting 3.x using the use-extension method and instead, use 4.x as the default option
 use-extension:
-  "@autorest/powershell": "4.x"
+  "@autorest/powershell": "3.x"
 
 directive:
   - suppress: XmsResourceInPutResponse
@@ -127,7 +130,6 @@ directive:
   - remove-operation: WebApps_GetProductionSiteDeploymentStatus
   - remove-operation: WebApps_GetSlotSiteDeploymentStatusSlot
   - remove-operation: Workflows_RegenerateAccessKey
-  - remove-operation: StorageAccounts_Update
   - from: WebApps.json
     where: $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/privateEndpointConnections/{privateEndpointConnectionName}"].delete.responses.200
     transform: delete $.schema
